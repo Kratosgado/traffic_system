@@ -1,6 +1,18 @@
 #if !defined(TRAFFIC)
 #define TRAFFIC
 
+#include "Arduino.h"
+
+struct TrafficData
+{
+    int triggerPin;
+    int echoPin;
+    int redPin;
+    int yellowPin;
+    int greenPin;
+};
+
+
 class Traffic {
 public:
     enum State {
@@ -21,13 +33,12 @@ private:
     bool incoming;
 
 public:
-    Traffic(/* args */) {};
-    Traffic(int triggerPin, int echoPin, int redPin, int yellowPin, int greenPin) {
-        this->triggerPin = triggerPin;
-        this->echoPin = echoPin;
-        this->redPin = redPin;
-        this->yellowPin = yellowPin;
-        this->greenPin = greenPin;
+    Traffic(const TrafficData data) {
+        this->triggerPin = data.triggerPin;
+        this->echoPin = data.echoPin;
+        this->redPin = data.redPin;
+        this->yellowPin = data.yellowPin;
+        this->greenPin = data.greenPin;
         this->state = RED;
         this->incoming = false;
     }

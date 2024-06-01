@@ -22,10 +22,10 @@ void Traffic::loop() {
     distance = (duration / 2) / 29.1;
 
     if (distance < 10) {
-        this->incoming = !incoming;
+        this->incoming = true;
         return;
     }
-    this->incoming = !incoming;
+    this->incoming = false;
 }
 
 void Traffic::switchState(const State state) {
