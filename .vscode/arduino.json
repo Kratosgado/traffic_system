@@ -1,0 +1,4 @@
+{
+    "sketch": "traffic_system.ino",
+    "board": "arduino:avr:uno"
+}
