@@ -33,7 +33,7 @@ private:
     bool incoming;
 
 public:
-    Traffic(const TrafficData data) {
+    Traffic(const TrafficData& data) {
         this->triggerPin = data.triggerPin;
         this->echoPin = data.echoPin;
         this->redPin = data.redPin;
