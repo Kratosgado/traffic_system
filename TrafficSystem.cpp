@@ -31,13 +31,15 @@ void TrafficSystem::loop() {
         {
         case Traffic::RED:
             this->rightTraffic->switchState(Traffic::GREEN);
+            delay(5000);
             break;
         case Traffic::YELLOW:
             this->rightTraffic->switchState(Traffic::RED);
             break;
         case Traffic::GREEN:
-            this->rightTraffic->switchState(Traffic::YELLOW);
+            this->rightTraffic->switchState(Traffic::RED);
         default:
+            this->rightTraffic->switchState(Traffic::RED);
             break;
         }
     } else if(this->leftTraffic->isIncoming()) {
@@ -45,13 +47,15 @@ void TrafficSystem::loop() {
         {
         case Traffic::RED:
             this->leftTraffic->switchState(Traffic::GREEN);
+            delay(5000);
             break;
         case Traffic::YELLOW:
             this->leftTraffic->switchState(Traffic::RED);
             break;
         case Traffic::GREEN:
-            this->leftTraffic->switchState(Traffic::YELLOW);
+            this->leftTraffic->switchState(Traffic::RED);
         default:
+            this->leftTraffic->switchState(Traffic::RED);
             break;
         }
     }
