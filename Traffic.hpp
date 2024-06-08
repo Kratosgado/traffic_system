@@ -26,6 +26,8 @@ private:
     // Pins
     int triggerPin;
     int echoPin;
+
+protected:
     int redPin;
     int bluePin;
     int greenPin;
@@ -40,6 +42,8 @@ private:
 public:
     int goTime;
     int waitTime;
+    Traffic(){};
+
 
     Traffic(const TrafficData& data) {
         this->triggerPin = data.triggerPin;

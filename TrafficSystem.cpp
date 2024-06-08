@@ -9,20 +9,20 @@ void TrafficSystem::setup() {
     rightData.greenPin = 6;
 
     TrafficData leftData;
-    leftData.triggerPin = 7;
-    leftData.echoPin = 8;
-    leftData.redPin = 9;
+    leftData.triggerPin = 9;
+    leftData.echoPin = 7;
+    leftData.redPin = 8;
     leftData.bluePin = 10;
     leftData.greenPin = 11;
 
     TrafficData topData;
 
     this->rightTraffic = new Traffic(rightData);
-    this->leftTraffic = new Traffic(leftData);
+    this->leftTraffic = new IrTraffic(leftData);
 
     this->rightTraffic->setup();
     this->leftTraffic->setup();
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("SYSTEM STARTING");
 }
 
@@ -37,8 +37,10 @@ void TrafficSystem::loop() {
         case Traffic::RED:
             Serial.println("No car at left traffic yet!!!");
             Serial.println("Get ready...");
-            this->rightTraffic->switchState(Traffic::YELLOW);
-            delay(2000);
+            if (this->rightTraffic->getState() == Traffic::RED) {
+                this->rightTraffic->switchState(Traffic::YELLOW);
+                delay(2000);
+            }
             this->rightTraffic->switchState(Traffic::GREEN);
             delay(5000);
             break;
@@ -63,8 +65,10 @@ void TrafficSystem::loop() {
         case Traffic::RED:
             Serial.println("No car at right traffic yet!!!");
             Serial.println("Get ready...");
-            this->leftTraffic->switchState(Traffic::YELLOW);
-            delay(2000);
+            if (this->leftTraffic->getState() == Traffic::RED) {
+                this->leftTraffic->switchState(Traffic::YELLOW);
+                delay(2000);
+            }
             this->leftTraffic->switchState(Traffic::GREEN);
             delay(5000);
             break;

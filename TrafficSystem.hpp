@@ -4,18 +4,20 @@
 #define MAX_WAIT_TIME 30
 
 #include "Traffic.hpp"
+#include "IrTraffic.hpp"
 
 class TrafficSystem {
 private:
     Traffic* rightTraffic;
-    Traffic* leftTraffic;
+    IrTraffic* leftTraffic;
 
 public:
-    TrafficSystem(){};
+    TrafficSystem() {};
     ~TrafficSystem();
 
     void setup();
     void loop();
+
 
 };
 
