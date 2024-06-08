@@ -30,6 +30,7 @@ void TrafficSystem::loop() {
     this->rightTraffic->loop();
     this->leftTraffic->loop();
 
+    // checking right traffic
     if (this->rightTraffic->isIncoming()) {
         Serial.println("incoming at right...");
         switch (this->leftTraffic->getState()) {
@@ -51,6 +52,11 @@ void TrafficSystem::loop() {
             break;
         }
     }
+    else {
+        this->rightTraffic->switchState(Traffic::RED);
+    }
+
+    // cheching left traffic
     if (this->leftTraffic->isIncoming()) {
         Serial.println("incoming at left...");
         switch (this->rightTraffic->getState()) {
@@ -71,6 +77,9 @@ void TrafficSystem::loop() {
             this->leftTraffic->switchState(Traffic::RED);
             break;
         }
+    }
+    else {
+        this->leftTraffic->switchState(Traffic::RED);
     }
 
 }

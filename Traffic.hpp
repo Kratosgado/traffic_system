@@ -36,11 +36,11 @@ private:
     // Incoming
     bool incoming;
 
+
+public:
     int goTime;
     int waitTime;
 
-
-public:
     Traffic(const TrafficData& data) {
         this->triggerPin = data.triggerPin;
         this->echoPin = data.echoPin;
@@ -49,6 +49,8 @@ public:
         this->greenPin = data.greenPin;
         this->state = RED;
         this->incoming = false;
+        this->goTime = 0;
+        this->waitTime = 0;
     }
     ~Traffic();
 
