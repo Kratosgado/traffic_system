@@ -1,14 +1,15 @@
 #if !defined(TRAFFIC)
 #define TRAFFIC
 
+#define MAX_DISTANCE 10
+
 #include "Arduino.h"
 
-struct TrafficData
-{
+struct TrafficData {
     int triggerPin;
     int echoPin;
     int redPin;
-    int yellowPin;
+    int bluePin;
     int greenPin;
 };
 
@@ -19,25 +20,32 @@ public:
         RED,
         YELLOW,
         GREEN
-     };
-     
+    };
+
 private:
+    // Pins
     int triggerPin;
     int echoPin;
     int redPin;
-    int yellowPin;
+    int bluePin;
     int greenPin;
 
+    // State
     State state;
 
+    // Incoming
     bool incoming;
+
+    int goTime;
+    int waitTime;
+
 
 public:
     Traffic(const TrafficData& data) {
         this->triggerPin = data.triggerPin;
         this->echoPin = data.echoPin;
         this->redPin = data.redPin;
-        this->yellowPin = data.yellowPin;
+        this->bluePin = data.bluePin;
         this->greenPin = data.greenPin;
         this->state = RED;
         this->incoming = false;

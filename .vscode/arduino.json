@@ -1,4 +1,5 @@
 {
     "sketch": "traffic_system.ino",
-    "board": "arduino:avr:uno"
+    "board": "arduino:avr:uno",
+    "port": "COM12"
 }

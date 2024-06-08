@@ -5,21 +5,25 @@ void TrafficSystem::setup() {
     rightData.triggerPin = 2;
     rightData.echoPin = 3;
     rightData.redPin = 4;
-    rightData.yellowPin = 5;
+    rightData.bluePin = 5;
     rightData.greenPin = 6;
 
     TrafficData leftData;
     leftData.triggerPin = 7;
     leftData.echoPin = 8;
     leftData.redPin = 9;
-    leftData.yellowPin = 10;
+    leftData.bluePin = 10;
     leftData.greenPin = 11;
+
+    TrafficData topData;
 
     this->rightTraffic = new Traffic(rightData);
     this->leftTraffic = new Traffic(leftData);
 
     this->rightTraffic->setup();
     this->leftTraffic->setup();
+    Serial.begin(9600);
+    Serial.println("SYSTEM STARTING");
 }
 
 void TrafficSystem::loop() {
@@ -27,9 +31,13 @@ void TrafficSystem::loop() {
     this->leftTraffic->loop();
 
     if (this->rightTraffic->isIncoming()) {
-        switch (this->leftTraffic->getState())
-        {
+        Serial.println("incoming at right...");
+        switch (this->leftTraffic->getState()) {
         case Traffic::RED:
+            Serial.println("No car at left traffic yet!!!");
+            Serial.println("Get ready...");
+            this->rightTraffic->switchState(Traffic::YELLOW);
+            delay(2000);
             this->rightTraffic->switchState(Traffic::GREEN);
             delay(5000);
             break;
@@ -42,10 +50,15 @@ void TrafficSystem::loop() {
             this->rightTraffic->switchState(Traffic::RED);
             break;
         }
-    } else if(this->leftTraffic->isIncoming()) {
-        switch (this->rightTraffic->getState())
-        {
+    }
+    if (this->leftTraffic->isIncoming()) {
+        Serial.println("incoming at left...");
+        switch (this->rightTraffic->getState()) {
         case Traffic::RED:
+            Serial.println("No car at right traffic yet!!!");
+            Serial.println("Get ready...");
+            this->leftTraffic->switchState(Traffic::YELLOW);
+            delay(2000);
             this->leftTraffic->switchState(Traffic::GREEN);
             delay(5000);
             break;

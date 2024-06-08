@@ -2,7 +2,7 @@
 
 void Traffic::setup() {
     pinMode(this->redPin, OUTPUT);
-    pinMode(this->yellowPin, OUTPUT);
+    pinMode(this->bluePin, OUTPUT);
     pinMode(this->greenPin, OUTPUT);
 
     pinMode(this->triggerPin, OUTPUT);
@@ -21,7 +21,7 @@ void Traffic::loop() {
     duration = pulseIn(this->echoPin, HIGH);
     distance = (duration / 2) / 29.1;
 
-    if (distance < 10) {
+    if (distance < MAX_DISTANCE and distance > 1) {
         this->incoming = true;
         return;
     }
@@ -30,7 +30,7 @@ void Traffic::loop() {
 
 void Traffic::switchState(const State state) {
     digitalWrite(this->redPin, LOW);
-    digitalWrite(this->yellowPin, LOW);
+    digitalWrite(this->bluePin, LOW);
     digitalWrite(this->greenPin, LOW);
 
     switch (state) {
@@ -38,7 +38,8 @@ void Traffic::switchState(const State state) {
         digitalWrite(this->redPin, HIGH);
         break;
     case YELLOW:
-        digitalWrite(this->yellowPin, HIGH);
+        digitalWrite(this->greenPin, HIGH);
+        digitalWrite(this->redPin, HIGH);
         break;
     case GREEN:
         digitalWrite(this->greenPin, HIGH);
