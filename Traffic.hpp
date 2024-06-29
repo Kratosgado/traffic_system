@@ -21,6 +21,7 @@ public:
         YELLOW,
         GREEN
     };
+    typedef unsigned long Time;
 
 private:
     // Pins
@@ -40,8 +41,8 @@ protected:
 
 
 public:
-    int goTime;
-    int waitTime;
+    Time goTime;
+    Time waitTime;
     Traffic(){};
 
 

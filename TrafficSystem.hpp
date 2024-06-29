@@ -1,7 +1,7 @@
 #if !defined(TRAFFIC_SYSTEM)
 #define TRAFFIC_SYSTEM
-#define MAX_GO_TIME 30
-#define MAX_WAIT_TIME 30
+#define MAX_GO_TIME 7000
+#define MAX_WAIT_TIME 7000
 
 #include "Traffic.hpp"
 #include "IrTraffic.hpp"

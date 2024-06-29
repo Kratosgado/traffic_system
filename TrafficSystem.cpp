@@ -1,5 +1,6 @@
 #include "TrafficSystem.hpp"
 
+
 void TrafficSystem::setup() {
     TrafficData rightData;
     rightData.triggerPin = 2;
@@ -27,6 +28,7 @@ void TrafficSystem::setup() {
 }
 
 void TrafficSystem::loop() {
+    Traffic::Time currentMillis = millis();
     this->rightTraffic->loop();
     this->leftTraffic->loop();
 
@@ -38,24 +40,33 @@ void TrafficSystem::loop() {
             Serial.println("No car at left traffic yet!!!");
             Serial.println("Get ready...");
             if (this->rightTraffic->getState() == Traffic::RED) {
-                this->rightTraffic->switchState(Traffic::YELLOW);
-                delay(2000);
+                if (currentMillis - this->rightTraffic->goTime <= 2000) { // Non-blocking delay for YELLOW
+                    this->rightTraffic->switchState(Traffic::YELLOW);
+                }
             }
-            this->rightTraffic->switchState(Traffic::GREEN);
-            delay(5000);
+            else if ((currentMillis - this->rightTraffic->goTime > 2000) && (currentMillis - this->leftTraffic->waitTime <= MAX_WAIT_TIME)) {
+                this->rightTraffic->switchState(Traffic::GREEN);
+                this->rightTraffic->waitTime = currentMillis;
+            }
+            else {
+                this->rightTraffic->switchState(Traffic::RED);
+                this->rightTraffic->goTime = currentMillis;
+            }
             break;
         case Traffic::YELLOW:
             this->rightTraffic->switchState(Traffic::RED);
+            this->rightTraffic->goTime = currentMillis;
             break;
-        case Traffic::GREEN:
-            this->rightTraffic->switchState(Traffic::RED);
         default:
             this->rightTraffic->switchState(Traffic::RED);
+            this->rightTraffic->goTime = currentMillis;
             break;
         }
     }
     else {
         this->rightTraffic->switchState(Traffic::RED);
+        this->rightTraffic->goTime = currentMillis;
+        this->rightTraffic->waitTime = currentMillis;
     }
 
     // cheching left traffic
@@ -66,24 +77,34 @@ void TrafficSystem::loop() {
             Serial.println("No car at right traffic yet!!!");
             Serial.println("Get ready...");
             if (this->leftTraffic->getState() == Traffic::RED) {
-                this->leftTraffic->switchState(Traffic::YELLOW);
-                delay(2000);
+                if (currentMillis - this->leftTraffic->goTime <= 2000) { // Non-blocking delay for YELLOW
+                    this->leftTraffic->switchState(Traffic::YELLOW);
+                }
             }
-            this->leftTraffic->switchState(Traffic::GREEN);
-            delay(5000);
+            else if ((currentMillis - this->leftTraffic->goTime > 2000) && (currentMillis - this->rightTraffic->waitTime <= MAX_WAIT_TIME)) {
+                this->leftTraffic->switchState(Traffic::GREEN);
+                this->leftTraffic->waitTime = currentMillis;
+            }
+            else {
+                this->leftTraffic->switchState(Traffic::RED);
+                this->leftTraffic->goTime = currentMillis;
+            }
+
             break;
         case Traffic::YELLOW:
             this->leftTraffic->switchState(Traffic::RED);
+            this->leftTraffic->goTime = currentMillis;
             break;
-        case Traffic::GREEN:
-            this->leftTraffic->switchState(Traffic::RED);
         default:
             this->leftTraffic->switchState(Traffic::RED);
+            this->leftTraffic->goTime = currentMillis;
             break;
         }
     }
     else {
         this->leftTraffic->switchState(Traffic::RED);
+        this->leftTraffic->goTime = currentMillis;
+        this->leftTraffic->waitTime = currentMillis;
     }
 
 }
