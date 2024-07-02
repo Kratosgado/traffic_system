@@ -2,13 +2,14 @@
 #define TRAFFIC_SYSTEM
 #define MAX_GO_TIME 7000
 #define MAX_WAIT_TIME 7000
+#define YELLOW_WAIT_TIME 2000
 
 #include "Traffic.hpp"
 #include "IrTraffic.hpp"
 
 class TrafficSystem {
 private:
-    Traffic* rightTraffic;
+    IrTraffic* rightTraffic;
     IrTraffic* leftTraffic;
 
 public:
