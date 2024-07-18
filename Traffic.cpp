@@ -7,6 +7,7 @@ void Traffic::setup() {
 
     pinMode(this->triggerPin, OUTPUT);
     pinMode(this->echoPin, INPUT);
+    pinMode(this->humanButton, INPUT);
 
     this->switchState(RED);
 }
@@ -26,6 +27,15 @@ void Traffic::loop() {
         return;
     }
     this->incoming = false;
+}
+
+bool Traffic::isHumanCrossing() {
+    Time currentMillis = millis();
+    if (digitalRead(this->humanButton) == HIGH) {
+        this->humanCrossTime = currentMillis;
+        return true;
+    }
+    return (currentMillis - this->humanCrossTime <= HUMAN_CROSS_TIME);
 }
 
 void Traffic::switchState(const State state) {

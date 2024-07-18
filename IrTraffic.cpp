@@ -6,6 +6,7 @@ void IrTraffic::setup() {
     pinMode(this->greenPin, OUTPUT);
 
     pinMode(this->irSensorPin, INPUT);
+    pinMode(this->humanButton, INPUT);
 
     this->switchState(RED);
 }

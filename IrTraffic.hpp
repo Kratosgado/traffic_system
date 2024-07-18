@@ -14,10 +14,12 @@ public:
         this->redPin = data.redPin;
         this->greenPin = data.greenPin;
         this->irSensorPin = data.triggerPin;
+        this->humanButton = data.humanButton;
         this->state = RED;
         this->incoming = false;
         this->goTime = 0;
         this->waitTime = 0;
+        this->humanCrossTime = 0;
     };
 
     void setup();

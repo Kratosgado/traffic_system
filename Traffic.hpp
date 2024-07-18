@@ -2,6 +2,7 @@
 #define TRAFFIC
 
 #define MAX_DISTANCE 10
+#define HUMAN_CROSS_TIME 5000
 
 #include "Arduino.h"
 
@@ -11,6 +12,7 @@ struct TrafficData {
     int redPin;
     int bluePin;
     int greenPin;
+    int humanButton;
 };
 
 
@@ -32,6 +34,7 @@ protected:
     int redPin;
     int bluePin;
     int greenPin;
+    int humanButton;
 
     // State
     State state;
@@ -39,11 +42,14 @@ protected:
     // Incoming
     bool incoming;
 
+    // human crossing time
+    Time humanCrossTime;
+
 
 public:
     Time goTime;
     Time waitTime;
-    Traffic(){};
+    Traffic() {};
 
 
     Traffic(const TrafficData& data) {
@@ -52,15 +58,19 @@ public:
         this->redPin = data.redPin;
         this->bluePin = data.bluePin;
         this->greenPin = data.greenPin;
+        this->humanButton = data.humanButton;
         this->state = RED;
         this->incoming = false;
         this->goTime = 0;
         this->waitTime = 0;
+        this->humanCrossTime = 0;
     }
     ~Traffic();
 
     void setup();
     void loop();
+    bool isHumanCrossing();
+
     void switchState(const State state);
     bool isIncoming() {
         return this->incoming;

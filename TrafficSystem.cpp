@@ -9,6 +9,7 @@ void TrafficSystem::setup() {
     rightData.redPin = 4;
     rightData.bluePin = 5;
     rightData.greenPin = 6;
+    rightData.humanButton = 12;
 
     TrafficData leftData;
     leftData.triggerPin = 9;
@@ -34,13 +35,15 @@ void TrafficSystem::loop() {
     this->rightTraffic->loop();
     this->leftTraffic->loop();
 
+    bool rightHumanCrossing = this->rightTraffic->isHumanCrossing();
+    Serial.println(rightHumanCrossing);
+
     // checking right traffic
-    if (this->rightTraffic->isIncoming()) {
+    if (this->rightTraffic->isIncoming() && !this->rightTraffic->isHumanCrossing()) {
         Serial.println("incoming at right...");
+        
         switch (this->leftTraffic->getState()) {
         case Traffic::RED:
-            // Serial.println("No car at left traffic yet!!!");
-            // Serial.println("Get ready...");
             if (this->rightTraffic->getState() == Traffic::RED || (currentMillis - this->rightTraffic->goTime <= YELLOW_WAIT_TIME)) {
                 this->rightTraffic->switchState(Traffic::YELLOW);
             }
@@ -70,7 +73,7 @@ void TrafficSystem::loop() {
     }
 
     // cheching left traffic
-    if (this->leftTraffic->isIncoming()) {
+    if (this->leftTraffic->isIncoming() && !this->leftTraffic->isHumanCrossing()) {
         // Serial.println("incoming at left...");
         switch (this->rightTraffic->getState()) {
         case Traffic::RED:
