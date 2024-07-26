@@ -7,10 +7,23 @@
 #include "Traffic.hpp"
 #include "IrTraffic.hpp"
 
+enum TrafficState {
+    RRED, RYELLOW, RGREEN, LRED, LYELLOW, LGREEN, RHUMAN, LHUMAN, NORHUMAN, NOLHUMAN
+};
+
 class TrafficSystem {
 private:
     IrTraffic* rightTraffic;
     IrTraffic* leftTraffic;
+    char cmd;
+
+    // methods
+    void analiseLeftTraffic(Traffic::Time currentMilis);
+    void analiseRightTraffic(Traffic::Time currentMilie);
+    char readCommand();
+    void sendMessage(IrTraffic& traffic, TrafficState state);
+    void analizeSerialCommand();
+
 
 public:
     TrafficSystem() {};
@@ -18,8 +31,6 @@ public:
 
     void setup();
     void loop();
-
-
 };
 
 #endif // TRAFFIC_SYSTEM

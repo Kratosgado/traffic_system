@@ -21,7 +21,9 @@ public:
     enum State {
         RED,
         YELLOW,
-        GREEN
+        GREEN,
+        Human,
+        NoHuman,
     };
     typedef unsigned long Time;
 
@@ -38,6 +40,7 @@ protected:
 
     // State
     State state;
+    State prevState;
 
     // Incoming
     bool incoming;
@@ -60,6 +63,7 @@ public:
         this->greenPin = data.greenPin;
         this->humanButton = data.humanButton;
         this->state = RED;
+        this->prevState = RED;
         this->incoming = false;
         this->goTime = 0;
         this->waitTime = 0;
@@ -78,6 +82,13 @@ public:
     Traffic::State getState() {
         return this->state;
     };
+
+    Traffic::State getPrevState() {
+        return this->prevState;
+    }
+    void updateState() {
+        this->prevState = this->state;
+    }
 };
 
 #endif // TRAFFIC
