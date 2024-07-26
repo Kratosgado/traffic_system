@@ -35,49 +35,43 @@ void TrafficSystem::loop() {
     this->rightTraffic->loop();
     this->leftTraffic->loop();
 
-    if (this->readCommand() < 0) {
-        // checking right traffic
-        bool isRCrossing = this->rightTraffic->isHumanCrossing();
-        if (this->rightTraffic->isIncoming() && !isRCrossing) {
-            this->analiseRightTraffic(currentMillis);
-        }
-        else {
-            if (isRCrossing) {
-                this->rightTraffic->switchState(Traffic::Human);
-                this->sendMessage(*rightTraffic, TrafficState::RHUMAN);
-            }
-            else {
-                this->rightTraffic->switchState(Traffic::RED);
-                this->sendMessage(*this->rightTraffic, TrafficState::NORHUMAN);
-            }
-            this->rightTraffic->goTime = currentMillis;
-            this->rightTraffic->waitTime = currentMillis;
-        }
-
-        // cheching left traffic
-        bool isLCrossing = this->leftTraffic->isHumanCrossing();
-        if (this->leftTraffic->isIncoming() && !isLCrossing) {
-            this->analiseLeftTraffic(currentMillis);
-        }
-        else {
-            if (isLCrossing) {
-                this->leftTraffic->switchState(Traffic::Human);
-                this->sendMessage(*leftTraffic, TrafficState::LHUMAN);
-            }
-            else {
-                this->leftTraffic->switchState(Traffic::RED);
-                this->sendMessage(*this->leftTraffic, TrafficState::NOLHUMAN);
-            }
-            this->leftTraffic->goTime = currentMillis;
-            this->leftTraffic->waitTime = currentMillis;
-        }
+    // checking right traffic
+    bool isRCrossing = this->rightTraffic->isHumanCrossing();
+    if (this->rightTraffic->isIncoming() && !isRCrossing) {
+        this->analiseRightTraffic(currentMillis);
     }
     else {
-        this->sendMessage(*this->rightTraffic, TrafficState::RRED);
+        // if (isRCrossing) {
+        //     this->rightTraffic->switchState(Traffic::Human);
+        //     this->sendMessage(*this->rightTraffic, TrafficState::RHUMAN);
+        // }
+        // else {
+        this->rightTraffic->switchState(Traffic::RED);
+        this->sendMessage(*this->rightTraffic, TrafficState::NORHUMAN);
+        // }
+        this->rightTraffic->goTime = currentMillis;
+        this->rightTraffic->waitTime = currentMillis;
     }
 
-
+    // cheching left traffic
+    bool isLCrossing = this->leftTraffic->isHumanCrossing();
+    if (this->leftTraffic->isIncoming() && !isLCrossing) {
+        this->analiseLeftTraffic(currentMillis);
+    }
+    else {
+        // if (isLCrossing) {
+        //     this->leftTraffic->switchState(Traffic::Human);
+        //     this->sendMessage(*this->leftTraffic, TrafficState::LHUMAN);
+        // }
+        // else {
+        this->leftTraffic->switchState(Traffic::RED);
+        this->sendMessage(*this->leftTraffic, TrafficState::NOLHUMAN);
+        // }
+        this->leftTraffic->goTime = currentMillis;
+        this->leftTraffic->waitTime = currentMillis;
+    }
 }
+
 
 char TrafficSystem::readCommand() {
     if (Serial.available() > 0) { // Check if there is data coming
@@ -95,8 +89,6 @@ void TrafficSystem::sendMessage(IrTraffic& traffic, TrafficState state) {
 }
 
 void TrafficSystem::analiseRightTraffic(Traffic::Time currentMillis) {
-    // Serial.println("incoming at right...");
-
     switch (this->leftTraffic->getState()) {
     case Traffic::RED:
         if (this->rightTraffic->getState() == Traffic::RED || (currentMillis - this->rightTraffic->goTime <= YELLOW_WAIT_TIME)) {
@@ -130,11 +122,8 @@ void TrafficSystem::analiseRightTraffic(Traffic::Time currentMillis) {
 }
 
 void TrafficSystem::analiseLeftTraffic(Traffic::Time currentMillis) {
-    // Serial.println("incoming at left...");
     switch (this->rightTraffic->getState()) {
     case Traffic::RED:
-        // Serial.println("No car at right traffic yet!!!");
-        // Serial.println("Get ready...");
         if (this->leftTraffic->getState() == Traffic::RED || (currentMillis - this->leftTraffic->goTime <= YELLOW_WAIT_TIME)) {
             this->leftTraffic->switchState(Traffic::YELLOW);
             this->sendMessage(*this->leftTraffic, TrafficState::LYELLOW);

@@ -45,6 +45,8 @@ void Traffic::switchState(const State state) {
 
     switch (state) {
     case Human:
+        digitalWrite(this->redPin, HIGH);
+        break;
     case RED:
         digitalWrite(this->redPin, HIGH);
         break;
