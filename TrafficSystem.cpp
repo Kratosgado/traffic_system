@@ -3,20 +3,22 @@
 void TrafficSystem::setup() {
     TrafficData rightData;
     rightData.triggerPin = 2;
-    rightData.echoPin = 3;
+    // rightData.echoPin = 3;
+    rightData.humanButton = 3;
+
 
     rightData.redPin = 4;
     rightData.bluePin = 5;
     rightData.greenPin = 6;
-    rightData.humanButton = 12;
 
     TrafficData leftData;
     leftData.triggerPin = 9;
-    leftData.echoPin = 7;
+    leftData.humanButton = 8;
 
-    leftData.redPin = 8;
-    leftData.bluePin = 10;
+    leftData.redPin = 10;
     leftData.greenPin = 11;
+    leftData.bluePin = 12;
+
 
     TrafficData topData;
 
@@ -26,7 +28,7 @@ void TrafficSystem::setup() {
     this->rightTraffic->setup();
     this->leftTraffic->setup();
     Serial.begin(9600);
-    Serial.println("SYSTEM STARTING");
+    Serial.println("Connected");
     this->cmd = -1;
 }
 
@@ -41,14 +43,14 @@ void TrafficSystem::loop() {
         this->analiseRightTraffic(currentMillis);
     }
     else {
-        // if (isRCrossing) {
-        //     this->rightTraffic->switchState(Traffic::Human);
-        //     this->sendMessage(*this->rightTraffic, TrafficState::RHUMAN);
-        // }
-        // else {
-        this->rightTraffic->switchState(Traffic::RED);
-        this->sendMessage(*this->rightTraffic, TrafficState::NORHUMAN);
-        // }
+        if (isRCrossing) {
+            this->rightTraffic->switchState(Traffic::HUMAN);
+            this->sendMessage(*this->rightTraffic, TrafficState::RHUMAN);
+        }
+        else {
+            this->rightTraffic->switchState(Traffic::RED);
+            this->sendMessage(*this->rightTraffic, TrafficState::NORHUMAN);
+        }
         this->rightTraffic->goTime = currentMillis;
         this->rightTraffic->waitTime = currentMillis;
     }
@@ -59,14 +61,14 @@ void TrafficSystem::loop() {
         this->analiseLeftTraffic(currentMillis);
     }
     else {
-        // if (isLCrossing) {
-        //     this->leftTraffic->switchState(Traffic::Human);
-        //     this->sendMessage(*this->leftTraffic, TrafficState::LHUMAN);
-        // }
-        // else {
-        this->leftTraffic->switchState(Traffic::RED);
-        this->sendMessage(*this->leftTraffic, TrafficState::NOLHUMAN);
-        // }
+        if (isLCrossing) {
+            this->leftTraffic->switchState(Traffic::HUMAN);
+            this->sendMessage(*this->leftTraffic, TrafficState::LHUMAN);
+        }
+        else {
+            this->leftTraffic->switchState(Traffic::RED);
+            this->sendMessage(*this->leftTraffic, TrafficState::NOLHUMAN);
+        }
         this->leftTraffic->goTime = currentMillis;
         this->leftTraffic->waitTime = currentMillis;
     }
@@ -109,13 +111,11 @@ void TrafficSystem::analiseRightTraffic(Traffic::Time currentMillis) {
     case Traffic::YELLOW:
         this->rightTraffic->switchState(Traffic::RED);
         this->sendMessage(*this->rightTraffic, TrafficState::RRED);
-
         this->rightTraffic->goTime = currentMillis;
         break;
     default:
         this->rightTraffic->switchState(Traffic::RED);
         this->sendMessage(*this->rightTraffic, TrafficState::RRED);
-
         this->rightTraffic->goTime = currentMillis;
         break;
     }

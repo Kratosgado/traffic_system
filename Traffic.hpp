@@ -22,8 +22,8 @@ public:
         RED,
         YELLOW,
         GREEN,
-        Human,
-        NoHuman,
+        HUMAN,
+        NOHUMAN,
     };
     typedef unsigned long Time;
 

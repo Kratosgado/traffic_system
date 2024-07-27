@@ -38,15 +38,13 @@ bool Traffic::isHumanCrossing() {
     return (currentMillis - this->humanCrossTime <= HUMAN_CROSS_TIME);
 }
 
-void Traffic::switchState(const State state) {
+void Traffic::switchState(const Traffic::State state) {
     digitalWrite(this->redPin, LOW);
     digitalWrite(this->bluePin, LOW);
     digitalWrite(this->greenPin, LOW);
 
     switch (state) {
-    case Human:
-        digitalWrite(this->redPin, HIGH);
-        break;
+    case HUMAN:
     case RED:
         digitalWrite(this->redPin, HIGH);
         break;
