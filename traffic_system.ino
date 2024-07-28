@@ -5,7 +5,6 @@ void setup() {
     trafficSystem->setup();
 }
 
-
 void loop() {
     trafficSystem->loop();
 }

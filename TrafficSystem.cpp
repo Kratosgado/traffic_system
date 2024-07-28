@@ -29,7 +29,8 @@ void TrafficSystem::setup() {
     this->leftTraffic->setup();
     Serial.begin(9600);
     Serial.println("Connected");
-    this->cmd = -1;
+    emergencyTime = millis();
+    this->cmd = "";
 }
 
 void TrafficSystem::loop() {
@@ -37,50 +38,57 @@ void TrafficSystem::loop() {
     this->rightTraffic->loop();
     this->leftTraffic->loop();
 
-    // checking right traffic
-    bool isRCrossing = this->rightTraffic->isHumanCrossing();
-    if (this->rightTraffic->isIncoming() && !isRCrossing) {
-        this->analiseRightTraffic(currentMillis);
-    }
-    else {
-        if (isRCrossing) {
-            this->rightTraffic->switchState(Traffic::HUMAN);
-            this->sendMessage(*this->rightTraffic, TrafficState::RHUMAN);
-        }
-        else {
-            this->rightTraffic->switchState(Traffic::RED);
-            this->sendMessage(*this->rightTraffic, TrafficState::NORHUMAN);
-        }
-        this->rightTraffic->goTime = currentMillis;
-        this->rightTraffic->waitTime = currentMillis;
-    }
+    char cmd = this->readCommand();
 
-    // cheching left traffic
-    bool isLCrossing = this->leftTraffic->isHumanCrossing();
-    if (this->leftTraffic->isIncoming() && !isLCrossing) {
-        this->analiseLeftTraffic(currentMillis);
-    }
-    else {
-        if (isLCrossing) {
-            this->leftTraffic->switchState(Traffic::HUMAN);
-            this->sendMessage(*this->leftTraffic, TrafficState::LHUMAN);
+    if (cmd == NULL) {
+        // checking right traffic
+        bool isRCrossing = this->rightTraffic->isHumanCrossing();
+        if (this->rightTraffic->isIncoming() && !isRCrossing) {
+            this->analiseRightTraffic(currentMillis);
         }
         else {
-            this->leftTraffic->switchState(Traffic::RED);
-            this->sendMessage(*this->leftTraffic, TrafficState::NOLHUMAN);
+            if (isRCrossing) {
+                this->rightTraffic->switchState(Traffic::HUMAN);
+                this->sendMessage(*this->rightTraffic, TrafficState::RHUMAN);
+            }
+            else {
+                this->rightTraffic->switchState(Traffic::RED);
+                this->sendMessage(*this->rightTraffic, TrafficState::NORHUMAN);
+            }
+            this->rightTraffic->goTime = currentMillis;
+            this->rightTraffic->waitTime = currentMillis;
         }
-        this->leftTraffic->goTime = currentMillis;
-        this->leftTraffic->waitTime = currentMillis;
+
+        // cheching left traffic
+        bool isLCrossing = this->leftTraffic->isHumanCrossing();
+        if (this->leftTraffic->isIncoming() && !isLCrossing) {
+            this->analiseLeftTraffic(currentMillis);
+        }
+        else {
+            if (isLCrossing) {
+                this->leftTraffic->switchState(Traffic::HUMAN);
+                this->sendMessage(*this->leftTraffic, TrafficState::LHUMAN);
+            }
+            else {
+                this->leftTraffic->switchState(Traffic::RED);
+                this->sendMessage(*this->leftTraffic, TrafficState::NOLHUMAN);
+            }
+            this->leftTraffic->goTime = currentMillis;
+            this->leftTraffic->waitTime = currentMillis;
+        }
     }
+    else  {
+            this->analiseSerialCommand(cmd, currentMillis);
+        }
 }
 
 
 char TrafficSystem::readCommand() {
-    if (Serial.available() > 0) { // Check if there is data coming
-        this->cmd = Serial.read(); // Read the message as String
-        return cmd;
+    char cmd;
+    while (Serial.available()) {
+        cmd = Serial.read();
     }
-    return -1;
+    return cmd;
 }
 
 void TrafficSystem::sendMessage(IrTraffic& traffic, TrafficState state) {
@@ -132,13 +140,11 @@ void TrafficSystem::analiseLeftTraffic(Traffic::Time currentMillis) {
         else if ((currentMillis - this->leftTraffic->goTime > YELLOW_WAIT_TIME) && (currentMillis - this->rightTraffic->waitTime <= MAX_WAIT_TIME)) {
             this->leftTraffic->switchState(Traffic::GREEN);
             this->sendMessage(*this->leftTraffic, TrafficState::LGREEN);
-
             this->leftTraffic->waitTime = currentMillis;
         }
         else {
             this->leftTraffic->switchState(Traffic::RED);
             this->sendMessage(*this->leftTraffic, TrafficState::LRED);
-
             this->leftTraffic->goTime = currentMillis;
         }
         break;
@@ -151,6 +157,29 @@ void TrafficSystem::analiseLeftTraffic(Traffic::Time currentMillis) {
         this->leftTraffic->switchState(Traffic::RED);
         this->sendMessage(*this->leftTraffic, TrafficState::LRED);
         this->leftTraffic->goTime = currentMillis;
+        break;
+    }
+}
+
+void TrafficSystem::analiseSerialCommand(int cmd, Traffic::Time currentMillis) {
+    switch (cmd) {
+    case TrafficState::RRED:
+        this->rightTraffic->switchState(Traffic::RED);
+        this->rightTraffic->goTime = currentMillis;
+        break;
+    case TrafficState::RGREEN:
+        this->rightTraffic->switchState(Traffic::GREEN);
+        this->rightTraffic->waitTime = currentMillis;
+        break;
+    case TrafficState::LRED:
+        this->leftTraffic->switchState(Traffic::RED);
+        this->leftTraffic->goTime = currentMillis;
+        break;
+    case TrafficState::LGREEN:
+        this->leftTraffic->switchState(Traffic::GREEN);
+        this->leftTraffic->waitTime = currentMillis;
+        break;
+    default:
         break;
     }
 }
